@@ -1,0 +1,47 @@
+USE WorldEvents;
+
+-- OWL
+SELECT
+	CASE
+		WHEN YEAR(EventDate) < 1800 THEN '18TH CENTURY'
+		WHEN YEAR(EventDate) < 1900 THEN '19TH CENTURY'
+		WHEN YEAR(EventDate) < 2000 THEN '20TH CENTURY'
+		ELSE '21ST CENTURY'
+	END AS CENTURY,
+
+	COUNT(*) AS [NUMBER OF EVENTS]
+
+FROM tblEvent
+
+GROUP BY
+	CUBE(
+		CASE
+			WHEN YEAR(EventDate) < 1800 THEN '18TH CENTURY'
+			WHEN YEAR(EventDate) < 1900 THEN '19TH CENTURY'
+			WHEN YEAR(EventDate) < 2000 THEN '20TH CENTURY'
+			ELSE '21ST CENTURY'
+		END
+	);
+
+
+
+-- MINE
+SELECT 
+	CONCAT(
+		CAST(LEFT(EventDate, 2) AS INT) + 1,
+		CASE
+			WHEN CAST(LEFT(EventDate, 2) AS INT) + 1 IN (18, 19, 20) THEN 'th Century'
+			ELSE 'st Century'
+
+		END
+	) AS Century,
+	COUNT(*) AS [Number of events]
+	
+FROM 
+	tblEvent 
+
+GROUP BY 
+	CUBE(CAST(LEFT(EventDate, 2) AS INT) + 1) 
+
+ORDER BY 
+	Century;
